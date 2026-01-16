@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadLegacy AI</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bs-body-font-family: "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --text-color: #311F10;
+            --accent-bg: #E6C9AD;
+            --white: #FFFFFF;
+            --anim-speed: 0.8s;
+            --anim-curve: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #FCF9F2;
+            color: var(--text-color);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* --- СИСТЕМА АНИМАЦИЙ --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--anim-speed) var(--anim-curve);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .video-reveal {
+            opacity: 0;
+            transform: scale(0.95) translateY(40px);
+            transition: all 1.2s var(--anim-curve);
+        }
+        .video-reveal.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* --- НАВБАР --- */
+        /* --- ОБНОВЛЕННЫЙ НАВБАР --- */
+        .navbar {
+            height: 10vh;
+            min-height: 64px;
+            background: #fff !important;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            position: fixed; /* Фиксированное позиционирование */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.4s ease-in-out; /* Плавное появление/исчезновение */
+            animation: slideDown 1s var(--anim-curve) forwards;
+        }
+
+        /* Класс, который будет добавляться при скролле вниз */
+        .navbar-hidden {
+            transform: translateY(-100%);
+        }
+        .logo-img { height: 6vh; width: 6vh; object-fit: contain; }
+        .ms-divider { width: 1px; height: 24px; background-color: #000; margin: 0 15px; }
+        .brand-text-muted { color: #616161; font-weight: 600; font-size: 18px; }
+        .navbar-brand-custom { color: #000; font-weight: 600; font-size: 18px; text-decoration: none; margin-right: 20px; }
+        .nav-link { color: #262626 !important; font-size: 14px; }
+        .nav-link:hover { text-decoration: underline; }
+
+        /* --- СЕКЦИЯ 1: HERO --- */
+        #TelegramPromotion {
+            min-height: 100vh;
+            padding-top: 80px;
+            background-color: var(--accent-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .display-5 { font-weight: 600; color: var(--text-color); text-align: center; }
+
+        .link-group { display: flex; gap: 1.5rem; justify-content: center; margin-top: 2rem; }
+        .generic-btn {
+            background: #311F10;
+            color: #E6C9AD;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 50rem !important;
+            padding: 14px 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            min-width: 280px;
+            border: 1px solid transparent;
+        }
+        .generic-btn:hover {
+            background: #FCFAF5 !important;
+            color: #311F10 !important;
+            border: 1px solid var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        .video-crop-container {
+            width: 40%;
+            margin: 30vh auto 0 auto;
+            overflow: hidden;
+            border-radius: 2rem 2rem 0 0;
+            border-top: 1.2vw solid var(--text-color);
+            border-left: 1.2vw solid var(--text-color);
+            border-right: 1.2vw solid var(--text-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            background: #000;
+        }
+        .promo-video { width: 100%; display: block; margin-bottom: -50px; }
+
+        /* ГРАДИЕНТЫ */
+        /* Плавный переход от Бежевого к Белому */
+.section-transition {
+    height: 15vh; /* Увеличим высоту для мягкости */
+    background: linear-gradient(
+        to bottom,
+        var(--accent-bg) 0%,
+        rgba(230, 201, 173, 0.7) 19%,
+        rgba(230, 201, 173, 0.4) 34%,
+        rgba(230, 201, 173, 0.2) 47%,
+        rgba(230, 201, 173, 0.1) 57%,
+        rgba(230, 201, 173, 0.05) 65%,
+        var(--white) 100%
+    );
+}
+
+/* Плавный переход от Белого к Бежевому */
+.section-transition-reverse {
+    height: 15vh;
+    background: linear-gradient(
+        to bottom,
+        var(--white) 0%,
+        rgba(230, 201, 173, 0.05) 35%,
+        rgba(230, 201, 173, 0.1) 43%,
+        rgba(230, 201, 173, 0.2) 53%,
+        rgba(230, 201, 173, 0.4) 66%,
+        rgba(230, 201, 173, 0.7) 81%,
+        var(--accent-bg) 100%
+    );
+}
+
+        /* --- СЕКЦИЯ 2: FAQ --- */
+        #FAQ { background-color: var(--white); padding: 80px 0; }
+        .faq-container { max-width: 850px; margin: 0 auto; }
+        .accordion-item { border: none; border-bottom: 1px solid #eee; }
+        .accordion-button { padding: 25px 0; font-size: 1.2rem; font-weight: 600; color: var(--text-color) !important; background-color: transparent !important; box-shadow: none !important; }
+        .accordion-body { padding: 0 0 25px 0; color: #444; line-height: 1.7; }
+        .faq-list { list-style: none; padding-left: 0; margin-top: 10px; }
+        .faq-list li::before { content: "•"; color: var(--accent-bg); font-weight: bold; margin-right: 10px; }
+
+        /* --- СЕКЦИЯ 3: LIMITS --- */
+        #Limits { background-color: var(--accent-bg); padding: 80px 0 150px 0; }
+        .bot-bubble {
+            background: #FFFFFF;
+            border-radius: 25px 25px 25px 10px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(49,31,16,0.15);
+            max-width: 700px;
+            margin: 40px auto 0;
+        }
+        .bot-bubble-header { font-size: 0.8rem; font-weight: 800; color: #8f5d3b; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 1px; }
+
+        .limit-row { display: flex; align-items: center; margin-bottom: 22px; gap: 20px; }
+        .model-name { width: 100px; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; text-align: left; }
+        .progress-wrapper { height: 14px; background: #f0f0f0; border-radius: 20px; overflow: hidden; flex-grow: 1; position: relative; }
+        .progress-fill { 
+            height: 100%; background-color: var(--text-color); width: 0; 
+            transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            border-radius: 20px; position: relative; overflow: hidden;
+        }
+        .progress-fill::after {
+            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+
+        .infinite-glow { 
+            background: linear-gradient(90deg, #311F10, #a17b5d, #311F10) !important; 
+            background-size: 200% 100%; animation: glow 3s linear infinite; 
+        }
+        @keyframes glow { 0% { background-position: 0% 0%; } 100% { background-position: 100% 0%; } }
+        .limit-value { width: 80px; text-align: right; font-family: monospace; font-weight: 600; font-size: 0.9rem; flex-shrink: 0; }
+
+        /* --- ПЛАВАЮЩАЯ СТРОКА (COMPOSER) --- */
+        .sticky-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 25%;
+            right: 25%;
+            z-index: 5000;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .sticky-bar:hover { transform: scale(1.02); }
+        .composer-box {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 8px 16px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            height: 64px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .composer-box img { height: 32px; width: 32px; margin-right: 15px; flex-shrink: 0; }
+        .text-container { flex-grow: 1; position: relative; font-size: 16px; color: #42413C; overflow: hidden; display: flex; align-items: center; }
+        .selection-overlay {
+            position: absolute; left: 0; top: 0; height: 100%; width: 0%;
+            background: rgba(0, 120, 215, 0.3);
+            z-index: 1; transition: width 0.3s ease;
+        }
+        #dynamic-text { position: relative; z-index: 2; white-space: nowrap; }
+        .send-btn { background: #f3f3f3; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; margin-left: 10px; flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            .sticky-bar { left: 5%; right: 5%; bottom: 20px; }
+            .video-crop-container { width: 90%; border-width: 3vw; margin-top: 15vh; }
+            .link-group { flex-direction: column; align-items: center; }
+            .generic-btn { width: 100%; min-width: auto; }
+            .bot-bubble { margin: 20px; padding: 25px; }
+            .model-name { width: 80px; font-size: 0.85rem; }
+            .limit-value { width: 60px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- НАВБАР -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-lg-5">
+            <div class="d-flex align-items-center">
+                <img src="logo.png" alt="Logo" class="logo-img me-2">
+                <span class="brand-text-muted d-none d-sm-inline">QuadLegacy</span>
+                <div class="ms-divider"></div>
+                <a class="navbar-brand-custom" href="https://quadlegacyai.github.io/">QuadLegacyAI</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Get started</a>
+                        <ul class="dropdown-menu shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-item" href="#">How to get QuadAI</a></li>
+                            <li><a class="dropdown-item" href="#">Features</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Try free version on QuadAI</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Products</a>
+                        <ul class="dropdown-menu shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-item" href="#">QuadLegacy Radio</a></li>
+                            <li><a class="dropdown-item" href="#">WebDWM</a></li>
+                            <li><a class="dropdown-item" href="#">QuadAI</a></li>
+                            <li><a class="dropdown-item" href="#">Bio</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- СЕКЦИЯ 1: HERO -->
+    <section id="TelegramPromotion">
+        <div class="container text-center">
+            <h1 class="py-3 display-5 reveal" style="transition-delay: 0.2s;">Chat with QuadLegacy AI</h1>
+            <p class="lead pb-4 reveal" style="transition-delay: 0.4s;">QuadLegacy AI может помочь вам с средними по тяжелости ответами в чатах, или ответить на повседневные вопросы.</p>
+            
+            <div class="link-group">
+                <a href="https://t.me/quadlegacyshizoaibot" class="btn generic-btn reveal" style="transition-delay: 0.6s;"><span>Telegram chat bot</span></a>
+                <a href="#" class="btn generic-btn reveal" style="transition-delay: 0.8s;"><span>Telegram Beta chat bot</span></a>
+            </div>
+        </div>
+
+        <div class="video-crop-container video-reveal" style="transition-delay: 1s;">
+            <video class="promo-video" autoplay loop muted playsinline>
+                <source src="video/animation.gif.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section>
+
+    <div class="section-transition"></div>
+
+    <!-- СЕКЦИЯ 2: FAQ (ВСЕ 5 ВОПРОСОВ) -->
+    <section id="FAQ">
+        <div class="container faq-container">
+            <h1 class="py-5 display-5 text-start reveal">Frequently asked questions</h1>
+            <div class="accordion reveal" id="faqAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f1">What social apps can i find QuadAI on?</button>
+                    </h2>
+                    <div id="f1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">° Telegram <br> Discord (in plans)</div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2">What is QuadAI capability on social apps?</button>
+                    </h2>
+                    <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Here are the ways you can use QuadAI tools in these social apps:
+                            <ul class="faq-list">
+                                <li>Chat with QuadAI</li>
+                                <li>Add QuadAI in group chats</li>
+                                <li>Get cached answers</li>
+                                <li>Get chat history</li>
+                                <li>Clear chat history</li>
+                                <li>Get some default prompts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3">What languages does QuadAI on social apps support?</button>
+                    </h2>
+                    <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">QuadAI on social apps supports the same languages that QuadAI does.</div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f4">Are there any usage limits with QuadAI on social apps?</button>
+                    </h2>
+                    <div id="f4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">On Telegram, Discord: You will get some turns each day. Read about limits below.</div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f5">How do I delete my chat history?</button>
+                    </h2>
+                    <div id="f5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">On telegram, discord: Use the command <code>/clear</code> in chat.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="section-transition-reverse"></div>
+
+    <!-- СЕКЦИЯ 3: LIMITS (ВСЕ 5 МОДЕЛЕЙ) -->
+    <section id="Limits">
+        <div class="container text-center">
+            <h1 class="py-3 display-5 reveal">Limits</h1>
+            <p class="lead reveal">Check your current usage and daily turns available for each model.</p>
+            
+            <div class="bot-bubble reveal" id="limitBubble">
+                <div class="bot-bubble-header">📊 Today limits</div>
+
+                <div class="limit-row">
+                    <div class="model-name">QWEN2</div>
+                    <div class="progress-wrapper"><div class="progress-fill infinite-glow" data-width="100%"></div></div>
+                    <div class="limit-value">0/&infin;</div>
+                </div>
+
+                <div class="limit-row">
+                    <div class="model-name">GEMINI</div>
+                    <div class="progress-wrapper"><div class="progress-fill" data-width="75%"></div></div>
+                    <div class="limit-value">0/15</div>
+                </div>
+
+                <div class="limit-row">
+                    <div class="model-name">GEMMA3</div>
+                    <div class="progress-wrapper"><div class="progress-fill" data-width="40%"></div></div>
+                    <div class="limit-value">0/7</div>
+                </div>
+
+                <div class="limit-row">
+                    <div class="model-name">QWEN25</div>
+                    <div class="progress-wrapper"><div class="progress-fill" data-width="25%"></div></div>
+                    <div class="limit-value">0/5</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ПЛАВАЮЩИЙ COMPOSER -->
+    <div id="composer" class="sticky-bar">
+        <div class="composer-box" id="composerTrigger">
+            <img src="https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/ST1262405%20Copilot%20Logo?scl=1&fmt=png-alpha" alt="AI Icon">
+            <div class="text-container">
+                <div class="selection-overlay" id="textSelection"></div>
+                <span id="dynamic-text">Message QuadAI...</span>
+            </div>
+            <div class="send-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4.2 10.7L11.2 3.3C11.6 3 12.3 3 12.7 3.3L19.8 10.7C20.1 11 20.1 11.5 19.8 11.8C19.5 12.1 19 12.1 18.7 11.8L12.8 5.5V20.2C12.8 20.7 12.4 21 12 21C11.6 21 11.2 20.7 11.2 20.2V5.5L5.3 11.8C5 12.1 4.5 12.1 4.2 11.8C3.9 11.5 3.9 11 4.2 10.7Z" fill="#311F10"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // --- 1. СПИСКИ ПРОМПТОВ ---
+    const promptsRU = [
+        "Как приготовить яблочный пирог?",
+        "Напиши код на Python для змейки",
+        "Объясни квантовую физику простыми словами",
+        "Придумай идею для стартапа",
+        "Помоги составить резюме",
+        "Напиши функцию на JavaScript для проверки палиндрома",
+        "Исправь грамматические ошибки в тексте",
+        "Что такое инфляция простыми словами?",
+        "Придумай 5 заголовков для статьи про сон",
+        "Составь план поездки в Питер на 2 дня"
+    ];
+
+    const promptsEN = [
+        "How to bake an apple pie?",
+        "Write Python code for a Snake game",
+        "Explain quantum physics in simple terms",
+        "Give me a startup idea",
+        "Help me write a resume",
+        "Write a JS function to check for palindromes",
+        "Fix grammatical errors in this text",
+        "What is inflation in simple terms?",
+        "Suggest 5 catchy headlines about sleep",
+        "Plan a 2-day trip to London"
+    ];
+
+    let prompts = promptsRU; // По умолчанию RU
+    let currentPrompt = "";
+
+    // --- 2. ОПРЕДЕЛЕНИЕ ЯЗЫКА ПО IP ---
+    async function detectLanguage() {
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            
+            // Если страна не входит в СНГ, ставим английский
+            const cisCountries = ['RU', 'BY', 'KZ', 'AM', 'KG', 'TJ', 'UZ'];
+            if (!cisCountries.includes(data.country_code)) {
+                prompts = promptsEN;
+                // Обновляем текст-заглушку в комспозере
+                document.getElementById('dynamic-text').textContent = "Message QuadAI...";
+            } else {
+                prompts = promptsRU;
+                document.getElementById('dynamic-text').textContent = "Написать QuadAI...";
+            }
+        } catch (error) {
+            console.log("IP detection failed, using browser language");
+            // Фолбек: проверка языка браузера
+            if (!navigator.language.startsWith('ru')) {
+                prompts = promptsEN;
+                document.getElementById('dynamic-text').textContent = "Message QuadAI...";
+            }
+        }
+    }
+
+    // --- 3. ПЕЧАТАЮЩИЙСЯ ТЕКСТ ---
+    async function animateText() {
+        const textEl = document.getElementById('dynamic-text');
+        const selectionEl = document.getElementById('textSelection');
+        
+        const runLoop = async () => {
+            const randomText = prompts[Math.floor(Math.random() * prompts.length)];
+            currentPrompt = randomText;
+            textEl.textContent = "";
+            selectionEl.style.width = "0%";
+            
+            for (let char of randomText) {
+                textEl.textContent += char;
+                await new Promise(r => setTimeout(r, 50));
+            }
+            
+            await new Promise(r => setTimeout(r, 3000));
+            selectionEl.style.width = "100%";
+            await new Promise(r => setTimeout(r, 500));
+            textEl.textContent = "";
+            selectionEl.style.width = "0%";
+        };
+
+        runLoop();
+        setInterval(runLoop, 9000); 
+    }
+
+    // --- 4. СКРОЛЛ-АНИМАЦИИ ---
+    function initAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    if (entry.target.id === 'limitBubble') {
+                        const bars = entry.target.querySelectorAll('.progress-fill');
+                        bars.forEach((bar, index) => {
+                            setTimeout(() => {
+                                bar.style.width = bar.getAttribute('data-width');
+                            }, index * 150);
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal, .video-reveal, #limitBubble').forEach(el => {
+            observer.observe(el);
+        });
+    }
+
+    // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ---
+    window.addEventListener('load', async () => {
+        await detectLanguage(); // Сначала определяем язык
+        initAnimations();
+        animateText();
+    });
+
+    // Клик по строке
+    document.getElementById('composerTrigger').addEventListener('click', () => {
+        const text = encodeURIComponent(currentPrompt || "Hello!");
+        window.open(`https://t.me/quadlegacyshizoaibot?text=${text}`, '_blank');
+    });
+
+    // Навбар
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            navbar.classList.add('navbar-hidden');
+        } else {
+            navbar.classList.remove('navbar-hidden');
+        }
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, false);
+</script>
+</body>
+</html>
