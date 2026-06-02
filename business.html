@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadLegacy AI — Telegram Business</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+
+    <style>
+        :root {
+            --bs-body-font-family: "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --text-color: #311F10;
+            --accent-bg: #E6C9AD;
+            --white: #FFFFFF;
+            --anim-speed: 0.8s;
+            --anim-curve: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #FCF9F2;
+            color: var(--text-color);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* --- СИСТЕМА АНИМАЦИЙ --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--anim-speed) var(--anim-curve);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .gif-reveal {
+            opacity: 0;
+            transform: scale(0.95) translateY(40px);
+            transition: all 1.2s var(--anim-curve);
+        }
+        .gif-reveal.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* --- НАВБАР (СОХРАНЕН ПОЛНОСТЬЮ) --- */
+        .navbar {
+            height: 10vh;
+            min-height: 64px;
+            background: #fff !important;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.4s ease-in-out;
+            animation: slideDown 1s var(--anim-curve) forwards;
+        }
+        .navbar-hidden { transform: translateY(-100%); }
+        .logo-img { height: 6vh; width: 6vh; object-fit: contain; }
+        .ms-divider { width: 1px; height: 24px; background-color: #000; margin: 0 15px; }
+        .brand-text-muted { color: #616161; font-weight: 600; font-size: 18px; }
+        .navbar-brand-custom { color: #000; font-weight: 600; font-size: 18px; text-decoration: none; margin-right: 20px; }
+        .nav-link { color: #262626 !important; font-size: 14px; }
+        .nav-link:hover { text-decoration: underline; }
+
+        /* --- СЕКЦИЯ КОНТЕНТА --- */
+        #BusinessGuide {
+            min-height: 100vh;
+            padding-top: 130px;
+            padding-bottom: 100px;
+            background-color: var(--accent-bg);
+            display: flex;
+            align-items: center;
+        }
+
+        .guide-container {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 50px rgba(49,31,16,0.15);
+            border: 1px solid rgba(0,0,0,0.05);
+            text-align: left;
+        }
+
+        .step-num {
+            background: var(--text-color);
+            color: var(--accent-bg);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 35px;
+        }
+        .step-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* --- КОНТЕЙНЕР ДЛЯ ГИФКИ (СТИЛЬ ИЗ ВИЗИТКИ) --- */
+        .gif-crop-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 2rem;
+            border: 1.2vw solid var(--text-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            background: #000;
+            margin-top: 20px;
+        }
+
+        .promo-gif { 
+            width: 100%; 
+            height: 100%;
+            object-fit: contain;
+            display: block; 
+        }
+
+        /* КНОПКА КЛАССИЧЕСКАЯ */
+        .generic-btn {
+            background: #311F10;
+            color: #E6C9AD;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 50rem !important;
+            padding: 14px 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .generic-btn:hover {
+            background: #FCFAF5 !important;
+            color: #311F10 !important;
+            border: 1px solid var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        /* ПЛАВАЮЩАЯ СТРОКА */
+        .sticky-bar { position: fixed; bottom: 30px; left: 25%; right: 25%; z-index: 5000; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .composer-box {
+            background: #ffffff; border-radius: 32px; padding: 8px 16px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.08);
+            display: flex; align-items: center; height: 64px; cursor: pointer; overflow: hidden;
+        }
+        .composer-box img { height: 32px; width: 32px; margin-right: 15px; flex-shrink: 0; }
+        .text-container { flex-grow: 1; position: relative; font-size: 16px; color: #42413C; overflow: hidden; display: flex; align-items: center; }
+        .selection-overlay { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: rgba(212, 175, 55, 0.2); z-index: 1; transition: width 0.3s ease; }
+        #dynamic-text { position: relative; z-index: 2; white-space: nowrap; }
+
+        @media (max-width: 991px) {
+            .guide-container { padding: 30px; }
+            .gif-crop-container { margin-top: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            .sticky-bar { left: 5%; right: 5%; }
+            .gif-crop-container { 
+                width: min(85vw, calc(25vh * 1.777)); 
+                margin: 40px auto 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- НАВБАР (СОХРАНЕН ПОЛНОСТЬЮ) -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-lg-5">
+            <div class="d-flex align-items-center">
+                <img src="logo.png" alt="Logo" class="logo-img me-2">
+                <span class="brand-text-muted d-none d-sm-inline">QuadLegacy</span>
+                <div class="ms-divider"></div>
+                <a class="navbar-brand-custom" href="index.html">QuadLegacyAI</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Get started</a>
+                        <ul class="dropdown-menu shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-item" href="index.html#ChatWithAI">How to get QuadAI</a></li>
+                            <li><a class="dropdown-item" href="index.html#f2">Features</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="https://t.me/quadlegacyshizoaibot">Try free version on QuadAI</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Products</a>
+                        <ul class="dropdown-menu shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-item" href="https://qlegacy.github.io/radio">QuadLegacy Radio</a></li>
+                            <li><a class="dropdown-item" href="https://qlegacy.github.io/dwm">WebDWM</a></li>
+                            <li><a class="dropdown-item" href="index.html">QuadAI</a></li>
+                            <li><a class="dropdown-item" href="https://qlegacy.github.io/bio">Bio</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- СЕКЦИЯ РУКОВОДСТВА -->
+    <section id="BusinessGuide">
+        <div class="container">
+            <div class="row align-items-center">
+                
+                <!-- Левая колонка: Текст и шаги -->
+                <div class="col-lg-6 reveal">
+                    <div class="guide-container">
+                        <h2 class="mb-4 font-weight-bold" style="color: var(--text-color);">Telegram Business</h2>
+                        <p class="mb-5 text-muted">Превратите бота в личного секретаря. С интеграцией Telegram Business ИИ сможет автоматически общаться с клиентами, отвечать на частые вопросы или просто развлекать друзей прямо от вашего имени.</p>
+                        
+                        <div class="step-row">
+                            <div class="step-num">1</div>
+                            <div>
+                                <h4 class="step-title">Подготовьте аккаунт</h4>
+                                <p class="step-desc">Убедитесь, что у вас активна подписка Telegram Premium или подключены функции категории Business.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-row">
+                            <div class="step-num">2</div>
+                            <div>
+                                <h4 class="step-title">Откройте меню роботов</h4>
+                                <p class="step-desc">Перейдите в <b>Настройки</b> → <b>Telegram Business</b> → вкладка <b>Чат-боты</b>.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-row">
+                            <div class="step-num">3</div>
+                            <div>
+                                <h4 class="step-title">Свяжите QuadAI</h4>
+                                <p class="step-desc">В строке поиска введите юзернейм бота: <code style="color: #8f5d3b;">@quadlegacyshizoaibot</code> и подтвердите привязку.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-row">
+                            <div class="step-num">4</div>
+                            <div>
+                                <h4 class="step-title">Задайте рамки</h4>
+                                <p class="step-desc">Гибко настройте фильтры: бот может обрабатывать только новые диалоги или полностью игнорировать выбранных вами людей.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Правая колонка: Демонстрационная GIF-анимация -->
+                <div class="col-lg-6 text-center">
+                    <div class="gif-crop-container gif-reveal">
+                        <!-- Здесь будет воспроизводиться ваша гифка -->
+                        <img class="promo-gif" src="video/business_guide.gif" alt="Telegram Business Guide Gif">
+                    </div>
+                    <div class="mt-5 reveal">
+                        <a href="index.html" class="btn generic-btn"><span>Вернуться на главную</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPOSER (СТИЛИЗОВАННЫЙ ПОД БИЗНЕС-ОТВЕТЫ) -->
+    <div id="composer" class="sticky-bar">
+        <div class="composer-box" id="composerTrigger">
+            <img src="logo.png" style="border-radius: 50%;" alt="AI">
+            <div class="text-container">
+                <div class="selection-overlay" id="textSelection"></div>
+                <span id="dynamic-text">Message QuadAI...</span>
+            </div>
+            <div class="ms-auto" style="opacity: 0.3;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M5 10l7-7 7 7" stroke="#311F10" stroke-width="2"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const promptsRU = [
+        "Подключить QuadAI к профилю",
+        "Как работает автоответчик?",
+        "Настроить ИИ для клиентов",
+        "Бизнес-интеграция Telegram"
+    ];
+
+    const promptsEN = [
+        "Connect QuadAI to my profile",
+        "How do auto-replies work?",
+        "Configure AI for clients",
+        "Telegram Business integration"
+    ];
+
+    let prompts = promptsRU;
+    let currentPrompt = "";
+
+    async function detectLanguage() {
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            const cisCountries = ['RU', 'BY', 'KZ', 'AM', 'KG', 'TJ', 'UZ'];
+            if (!cisCountries.includes(data.country_code)) {
+                prompts = promptsEN;
+                document.getElementById('dynamic-text').textContent = "Configure Business Bot...";
+            } else {
+                prompts = promptsRU;
+                document.getElementById('dynamic-text').textContent = "Настроить Бизнес-бота...";
+            }
+        } catch (e) {
+            if (!navigator.language.startsWith('ru')) {
+                prompts = promptsEN;
+                document.getElementById('dynamic-text').textContent = "Configure Business Bot...";
+            }
+        }
+    }
+
+    async function animateText() {
+        const textEl = document.getElementById('dynamic-text');
+        const selectionEl = document.getElementById('textSelection');
+        const runLoop = async () => {
+            const randomText = prompts[Math.floor(Math.random() * prompts.length)];
+            currentPrompt = randomText;
+            textEl.textContent = "";
+            selectionEl.style.width = "0%";
+            for (let char of randomText) {
+                textEl.textContent += char;
+                await new Promise(r => setTimeout(r, 50));
+            }
+            await new Promise(r => setTimeout(r, 3000));
+            selectionEl.style.width = "100%";
+            await new Promise(r => setTimeout(r, 500));
+            textEl.textContent = "";
+            selectionEl.style.width = "0%";
+        };
+        runLoop();
+        setInterval(runLoop, 9000); 
+    }
+
+    function initAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal, .gif-reveal').forEach(el => observer.observe(el));
+    }
+
+    window.addEventListener('load', async () => {
+        await detectLanguage();
+        initAnimations();
+        animateText();
+    });
+
+    document.getElementById('composerTrigger').addEventListener('click', () => {
+        const text = encodeURIComponent(currentPrompt);
+        window.open(`https://t.me/quadlegacyshizoaibot?text=${text}`, '_blank');
+    });
+
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop && scrollTop > 100) navbar.classList.add('navbar-hidden');
+        else navbar.classList.remove('navbar-hidden');
+        lastScrollTop = scrollTop;
+    });
+    </script>
+</body>
+</html>
