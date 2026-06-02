@@ -125,11 +125,13 @@
             transform: translateY(-2px);
         }
 
-        .video-crop-container {
-    width: 40%;
-    max-width: 600px; /* Ограничиваем ширину на очень широких экранах */
-    max-height: 35vh; /* Ограничиваем высоту до 35% от высоты экрана */
-    margin: 4vh auto 0 auto; /* Уменьшили отступ сверху с 10vh до 4vh */
+       .video-crop-container {
+    /* Ширина будет составлять либо 40% ширины экрана, либо автоматически уменьшится так, 
+       чтобы высота видео не превышала 35% высоты экрана (35vh * 1.777 для формата 16:9) */
+    width: min(40vw, calc(35vh * 1.777)); 
+    aspect-ratio: 16 / 9; /* Укажите точные пропорции вашего видео */
+    
+    margin: 4vh auto 0 auto; /* Умеренный отступ сверху */
     overflow: hidden;
     border-radius: 2rem 2rem 0 0;
     border-top: 1.2vw solid var(--text-color);
@@ -137,14 +139,12 @@
     border-right: 1.2vw solid var(--text-color);
     box-shadow: 0 20px 50px rgba(0,0,0,0.15);
     background: #000;
-    display: flex;
-    align-items: flex-start;
 }
 
 .promo-video { 
     width: 100%; 
     height: 100%;
-    object-fit: cover; /* Видео подстраивается под размеры контейнера без искажений */
+    object-fit: contain; /* Полностью исключает обрезку содержимого видео */
     display: block; 
 }
 
