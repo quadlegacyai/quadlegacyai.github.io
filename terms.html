@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Условия использования — QuadLegacy AI</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+
+    <style>
+        :root {
+            --bs-body-font-family: "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --text-color: #311F10;
+            --accent-bg: #E6C9AD;
+            --white: #FFFFFF;
+            --anim-speed: 0.8s;
+            --anim-curve: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #FCF9F2;
+            color: var(--text-color);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* --- СИСТЕМА АНИМАЦИЙ --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--anim-speed) var(--anim-curve);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* --- НАВБАР (ИДЕНТИЧЕН INDEX) --- */
+        .navbar {
+            height: 10vh;
+            min-height: 64px;
+            background: #fff !important;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.4s ease-in-out;
+            animation: slideDown 1s var(--anim-curve) forwards;
+        }
+        .navbar-hidden { transform: translateY(-100%); }
+        .logo-img { height: 6vh; width: 6vh; object-fit: contain; }
+        .ms-divider { width: 1px; height: 24px; background-color: #000; margin: 0 15px; }
+        .brand-text-muted { color: #616161; font-weight: 600; font-size: 18px; }
+        .navbar-brand-custom { color: #000; font-weight: 600; font-size: 18px; text-decoration: none; margin-right: 20px; }
+        .nav-link { color: #262626 !important; font-size: 14px; }
+        .nav-link:hover { text-decoration: underline; }
+
+        /* --- HERO-СЕКЦИЯ TOS --- */
+        #TermsHeader {
+            padding-top: 140px;
+            padding-bottom: 40px;
+            background-color: var(--accent-bg);
+            text-align: center;
+        }
+        .tos-badge {
+            background: var(--text-color);
+            color: var(--accent-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .display-5 { font-weight: 600; color: var(--text-color); }
+
+        /* МЯГКИЕ ГРАДИЕНТЫ */
+        .section-transition {
+            height: 12vh;
+            background: linear-gradient(
+                to bottom,
+                var(--accent-bg) 0%,
+                rgba(230, 201, 173, 0.7) 19%,
+                rgba(230, 201, 173, 0.4) 34%,
+                rgba(230, 201, 173, 0.2) 47%,
+                var(--white) 100%
+            );
+        }
+
+        /* --- КАРТОЧКИ И ПРАВИЛА --- */
+        .tos-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 15px 140px 15px;
+        }
+        .tos-card {
+            background: #fcf9f2;
+            padding: 35px;
+            border-radius: 28px;
+            border: 2px dashed var(--accent-bg);
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(49, 31, 16, 0.04);
+        }
+        .tos-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tos-card p, .tos-card li {
+            color: #42413C;
+            line-height: 1.75;
+            font-size: 1rem;
+        }
+        .tos-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 12px;
+            margin-bottom: 0;
+        }
+        .tos-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 10px;
+        }
+        .tos-list li::before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: #a17b5d;
+            font-weight: bold;
+            font-size: 1.2rem;
+            line-height: 1.5rem;
+        }
+
+        /* БЛОКИ ВАЖНЫХ ПРЕДУПРЕЖДЕНИЙ */
+        .warning-callout {
+            background: #fff;
+            border-left: 4px solid var(--text-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .warning-callout b {
+            color: #8f5d3b;
+        }
+        code {
+            background-color: rgba(49, 31, 16, 0.08);
+            color: var(--text-color);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        /* КНОПКА ВОЗВРАТА */
+        .generic-btn {
+            background: #311F10;
+            color: #E6C9AD;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 50rem !important;
+            padding: 12px 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .generic-btn:hover {
+            background: #FCFAF5 !important;
+            color: #311F10 !important;
+            border: 1px solid var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        /* ПЛАВАЮЩАЯ СТРОКА НАЗАД */
+        .sticky-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 25%;
+            right: 25%;
+            z-index: 5000;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .composer-box {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 8px 24px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s ease;
+        }
+        .composer-box:hover {
+            transform: translateY(-3px);
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .sticky-bar { left: 5%; right: 5%; }
+            .tos-card { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- НАВБАР -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-lg-5">
+            <div class="d-flex align-items-center">
+                <img src="logo.png" alt="Logo" class="logo-img me-2">
+                <span class="brand-text-muted d-none d-sm-inline">QuadLegacy</span>
+                <div class="ms-divider"></div>
+                <a class="navbar-brand-custom" href="index.html">QuadLegacyAI</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#TelegramPromotion">Боты</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#FAQ">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="business.html">Telegram Business</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER СЕКЦИЯ -->
+    <header id="TermsHeader">
+        <div class="container text-center">
+            <div class="tos-badge reveal">LEGAL & PRIVACY POLICY</div>
+            <h1 class="py-2 display-5 reveal">Условия использования (ToS)</h1>
+            <p class="lead reveal" style="max-width: 700px; margin: 0 auto;">
+                Правила взаимодействия с экосистемой ботов QuadAI, сбора данных, обучения моделей и отказа от ответственности.
+            </p>
+            <div class="mt-3 reveal">
+                <small class="text-muted">Редакция от 2026 года • Контакты: @mistercatnap / @catnap</small>
+            </div>
+        </div>
+    </header>
+
+    <div class="section-transition"></div>
+
+    <!-- ТЕЛО СОГЛАШЕНИЯ -->
+    <main class="tos-container">
+
+        <!-- ВВОДНАЯ ЧАСТЬ -->
+        <div class="tos-card reveal">
+            <p class="mb-0">
+                Нажатие кнопки <b>«Я подтверждаю»</b>, отправка команды <code>/start</code> или любое фактическое использование функций бота означает <b>полное и безоговорочное согласие</b> с настоящими Условиями. Если вы не согласны с ними, немедленно прекратите использование бота и удалите его из своих диалогов и чатов.
+            </p>
+        </div>
+
+        <!-- РАЗДЕЛ 1 -->
+        <div class="tos-card reveal">
+            <h3>1. Предмет и назначение сервиса</h3>
+            <p>Бот <b>QuadAI</b> предоставляет экспериментальные и развлекательные сервисы искусственного интеллекта:</p>
+            <ul class="tos-list">
+                <li>Генерация текста на основе локальных LLM (Qwen, Gemma, Llama) и API Google Gemini.</li>
+                <li>Рендеринг стилизованных 3D и ретро-видеороликов движком <b>FluxV-Tempo</b> (Raycasting DDA, Mario runner, Sega Ahh).</li>
+                <li>Работа самообучающейся ассоциативной модели <b>FluxT-GidroD</b>, индексирующей сообщения пользователей.</li>
+            </ul>
+            <p class="mt-3 mb-0">Сервис предоставляется по принципу <b>«КАК ЕСТЬ» («AS IS»)</b> и <b>«ПО МЕРЕ ДОСТУПНОСТИ» («AS AVAILABLE»)</b>.</p>
+        </div>
+
+        <!-- РАЗДЕЛ 2 -->
+        <div class="tos-card reveal">
+            <h3>2. Сбор, хранение данных и медиафайлов</h3>
+            <ul class="tos-list">
+                <li><b>Сбор медиа:</b> Бот вправе сохранять и обрабатывать любые текстовые сообщения, фотографии, видеозаписи, документы, аудиозаписи и вложения, полученные в диалогах, группах или через статус Telegram Business.</li>
+                <li><b>Обучение FluxT-GidroD:</b> Вся текстовая информация и реплики могут индексироваться для непрерывного обучения ассоциативной модели.</li>
+                <li><b>Загрузка прошлых сообщений:</b> Пользователи могут принудительно проиндексировать историю чата внутрь базы бота командой <code>/parse_old_message</code>.</li>
+            </ul>
+
+            <div class="warning-callout mt-3">
+                <b>ВАЖНОЕ ПРЕДУПРЕЖДЕНИЕ:</b>
+                <ul class="tos-list mt-2">
+                    <li>Категорически запрещено отправлять боту личные конфиденциальные данные (пароли, номера карт, паспорта, чужие тайны).</li>
+                    <li><b>Администрация НЕ удаляет то, что уже попало или могло попасть в базу данных и обучающие датасеты.</b></li>
+                    <li><b>Администрация НЕ несёт ответственности, если обученная модель в ответе скинет чужую персональную информацию, отправленную ранее другими лицами.</b></li>
+                </ul>
+            </div>
+            <p class="mb-0 mt-2">Очистка контекста текущего диалога возможна через команду <code>/clear</code> (история генерации) и <code>/specialmemory</code> (факты).</p>
+        </div>
+
+        <!-- РАЗДЕЛ 3 -->
+        <div class="tos-card reveal">
+            <h3>3. Telegram Business и группы</h3>
+            <ul class="tos-list">
+                <li>При подключении бота через <b>Telegram Business Connection</b> владелец профиля сам несёт ответственность за предупреждение собеседников о том, что переписка обрабатывается ИИ.</li>
+                <li>Добавлять бота в группы разрешено <b>только администраторам</b>. Администратор подтверждает согласие участников группы на обработку и сохранение их сообщений.</li>
+            </ul>
+        </div>
+
+        <!-- РАЗДЕЛ 4 -->
+        <div class="tos-card reveal">
+            <h3>4. Генерация контента и здоровье</h3>
+            <p>ИИ может генерировать вымышленные или ошибочные ответы (галлюцинации). Ответы в режиме <code>uncensored</code> или Linux-терминалов носят художественный симуляционный характер.</p>
+            <div class="warning-callout">
+                <b>ПРЕДУПРЕЖДЕНИЕ О ФОТОСЕНСИБИЛИЗАЦИИ И СЛУХЕ:</b>
+                <p class="mb-0 mt-1">Видео-режим <code>/video</code> (FluxV-Tempo) содержит резкие сбои, мерцания экрана (glitch, white flash, otval) и громкий перегруженный звук. <b>Людям с эпилепсией и нарушениями слуха генерация видео строго запрещена.</b></p>
+            </div>
+        </div>
+
+        <!-- РАЗДЕЛ 5 -->
+        <div class="tos-card reveal">
+            <h3>5. Правила допустимого использования (AUP)</h3>
+            <p>Запрещено:</p>
+            <ul class="tos-list">
+                <li>Создавать контент, нарушающий законы (экстремизм, терроризм, запрещенные вещества, ЦП).</li>
+                <li><b>Abuse бота с нескольких аккаунтов, или намеренно забивать базу данных сообщениями, которые могут сказаться на ответе ИИ плохим образом</b> (порча обучающего датасета).</li>
+                <li>Организовывать атаки на отказ в обслуживании (включая попытки вызова сбоев).</li>
+            </ul>
+        </div>
+
+        <!-- РАЗДЕЛ 6 -->
+        <div class="tos-card reveal">
+            <h3>6. Безопасность и API-ключи</h3>
+            <div class="warning-callout">
+                <b>ЗАЩИТА ОТ МОШЕННИЧЕСТВА:</b>
+                <p class="mb-0 mt-1"><b>Администрация НИКОГДА не запрашивает данные от ваших аккаунтов, пароли, коды подтверждения или 2FA.</b></p>
+            </div>
+            <p class="mt-2 mb-0">При добровольной привязке своего Gemini API ключа для получения бонусов вы осознаёте, что лимиты расходуются общим пулом генераций.</p>
+        </div>
+
+        <!-- РАЗДЕЛ 7 -->
+        <div class="tos-card reveal">
+            <h3>7. Лимиты, подписки и пожертвования</h3>
+            <ul class="tos-list">
+                <li>Количество генераций ограничено суточными лимитами, меняющимися в зависимости от нагрузки.</li>
+                <li>Оплата подписок через Telegram Stars и прямые донаты (CryptoBot, TON) являются безвозмездными пожертвованиями на поддержку проекта. <b>Средства возврату не подлежат (non-refundable).</b></li>
+                <li><b>Администрация не гарантирует выдачи ВСЕХ преимуществ</b> и оставляет за собой право корректировать их состав и доступность в любой момент.</li>
+            </ul>
+        </div>
+
+        <!-- РАЗДЕЛ 8 И 9 -->
+        <div class="tos-card reveal">
+            <h3>8. Изменения и контакты</h3>
+            <p>Администрация может изменять настоящие Условия в одностороннем порядке. Актуальная ссылка всегда закреплена в команде <code>/start</code> бота.</p>
+            <p class="mb-0">Связь с разработчиками: <b>@mistercatnap</b> или <b>@catnap</b>.</p>
+        </div>
+
+    </main>
+
+    <!-- ПЛАВАЮЩАЯ СТРОКА НАЗАД -->
+    <div class="sticky-bar">
+        <a href="index.html" class="composer-box">
+            <div class="d-flex align-items-center">
+                <img src="logo.png" style="height: 32px; width: 32px; border-radius: 50%; margin-right: 15px;" alt="Logo">
+                <span style="font-weight: 600;">Вернуться на главную</span>
+            </div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="#311F10" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- СКРИПТЫ АНИМАЦИИ И СКРОЛЛА (ИЗ INDEX) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function initAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.08 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        window.addEventListener('load', () => {
+            initAnimations();
+        });
+
+        let lastScrollTop = 0;
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.classList.add('navbar-hidden');
+            } else {
+                navbar.classList.remove('navbar-hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+    </script>
+</body>
+</html>
