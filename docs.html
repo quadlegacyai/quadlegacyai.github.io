@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadAI — Документация</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+
+    <style>
+        :root {
+            --bs-body-font-family: "Segoe UI", SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --text-color: #311F10;
+            --accent-bg: #E6C9AD;
+            --paper: #FCF9F2;
+            --white: #FFFFFF;
+            --muted: #8f5d3b;
+            --anim-speed: 0.8s;
+            --anim-curve: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--paper);
+            color: var(--text-color);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        section[id], h2[id], h3[id] { scroll-margin-top: 90px; }
+
+        /* --- АНИМАЦИИ --- */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all var(--anim-speed) var(--anim-curve); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(49,31,16,0.3); } 100% { transform: scale(1); } }
+
+        /* --- НАВБАР --- */
+        .navbar {
+            height: 10vh; min-height: 64px; background: #fff !important; border-bottom: 1px solid #e6e6e6;
+            display: flex; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            transition: transform 0.4s ease-in-out; animation: slideDown 1s var(--anim-curve) forwards;
+        }
+        .navbar-hidden { transform: translateY(-100%); }
+        .logo-img { height: 6vh; width: 6vh; min-height: 36px; min-width: 36px; object-fit: contain; }
+        .ms-divider { width: 1px; height: 24px; background-color: #000; margin: 0 15px; }
+        .brand-text-muted { color: #616161; font-weight: 600; font-size: 18px; }
+        .navbar-brand-custom { color: #000; font-weight: 600; font-size: 18px; text-decoration: none; margin-right: 20px; }
+        .nav-link { color: #262626 !important; font-size: 14px; }
+        .nav-link:hover { text-decoration: underline; }
+        .nav-link.current { font-weight: 700; }
+
+        /* --- HERO --- */
+        #DocsHero { padding: 130px 0 70px; background-color: var(--accent-bg); text-align: center; }
+        .flux-badge {
+            background: var(--text-color); color: var(--accent-bg); padding: 5px 15px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; display: inline-block; animation: pulse 2s infinite;
+        }
+        .display-5 { font-weight: 600; color: var(--text-color); text-align: center; }
+        .generic-btn {
+            background: #311F10; color: #E6C9AD; text-decoration: none; font-weight: 500; border-radius: 50rem !important;
+            padding: 12px 28px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s ease; border: 1px solid transparent;
+        }
+        .generic-btn:hover { background: #FCFAF5 !important; color: #311F10 !important; border: 1px solid var(--text-color); transform: translateY(-2px); }
+        .hero-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+
+        .section-transition { height: 12vh; background: linear-gradient(to bottom, var(--accent-bg) 0%, rgba(230,201,173,.7) 19%, rgba(230,201,173,.4) 34%, rgba(230,201,173,.2) 47%, var(--paper) 100%); }
+
+        /* --- РАСКЛАДКА ДОКУМЕНТАЦИИ --- */
+        .docs-wrap { max-width: 1180px; margin: 0 auto; padding: 10px 20px 140px; display: flex; gap: 48px; align-items: flex-start; }
+        .toc { width: 250px; flex-shrink: 0; position: sticky; top: 90px; max-height: calc(100vh - 110px); overflow-y: auto; padding-right: 6px; }
+        .toc-title { font-size: .75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px 12px; }
+        .toc a {
+            display: block; padding: 8px 12px; border-radius: 12px; color: var(--text-color); text-decoration: none; font-size: .93rem;
+            border-left: 3px solid transparent; transition: all .2s;
+        }
+        .toc a:hover { background: rgba(230,201,173,.35); }
+        .toc a.on { background: var(--accent-bg); font-weight: 700; border-left-color: var(--text-color); }
+        .toc a.sub { padding-left: 26px; font-size: .86rem; color: #5b4430; }
+        .doc { flex: 1; min-width: 0; }
+
+        .doc-sec { background: var(--white); border-radius: 30px; padding: 40px 44px; margin-bottom: 28px; box-shadow: 0 10px 40px rgba(49,31,16,.06); }
+        .doc-sec h2 { font-weight: 700; font-size: 1.7rem; margin: 0 0 6px; }
+        .doc-sec h3 { font-weight: 700; font-size: 1.15rem; margin: 30px 0 10px; }
+        .doc-sec p, .doc-sec li { line-height: 1.7; color: #3d2b1a; }
+        .lead-sm { color: var(--muted); margin-bottom: 18px; }
+        .doc-sec ul { padding-left: 1.2rem; }
+        .doc-sec code:not(pre code) { background: #f3e7d8; color: var(--text-color); padding: 2px 7px; border-radius: 8px; font-size: .88em; }
+        .doc-sec a { color: var(--muted); font-weight: 600; }
+
+        .callout { background: #fcf9f2; border: 2px dashed var(--accent-bg); border-radius: 22px; padding: 18px 22px; margin: 20px 0; }
+        .callout b.t { display: block; margin-bottom: 4px; }
+        .callout.warn { border-color: #d4af37; }
+
+        /* таблицы */
+        .tbl-wrap { overflow-x: auto; margin: 14px 0; border: 1px solid #eee; border-radius: 18px; }
+        table.t { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 460px; }
+        table.t th { background: #f3e7d8; text-align: left; padding: 11px 16px; font-weight: 700; white-space: nowrap; }
+        table.t td { padding: 11px 16px; border-top: 1px solid #f0e6da; vertical-align: top; }
+        table.t td:first-child { white-space: nowrap; }
+
+        /* блоки кода */
+        .code { margin: 14px 0 18px; border-radius: 18px; overflow: hidden; background: #26170b; }
+        .code .head { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; font-size: .75rem; color: #bda68c; background: rgba(255,255,255,.06); }
+        .code .head button { border: none; background: none; color: #bda68c; font-size: .75rem; padding: 3px 8px; border-radius: 8px; cursor: pointer; }
+        .code .head button:hover { background: rgba(255,255,255,.12); color: #fff; }
+        .code pre { margin: 0; padding: 16px 18px; overflow-x: auto; color: #f3e3cf; font-size: .85rem; line-height: 1.6; }
+        .code pre code { font-family: ui-monospace, Menlo, Consolas, monospace; background: none; color: inherit; padding: 0; }
+
+        .method { display: inline-block; font-family: ui-monospace, Consolas, monospace; font-weight: 800; font-size: .78rem; padding: 3px 10px; border-radius: 10px; margin-right: 8px; color: #fff; }
+        .m-get { background: #4b7a3f; } .m-post { background: #311F10; } .m-del { background: #b3452f; }
+        .endpoint { font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: 1rem; word-break: break-all; }
+
+        /* карточки моделей */
+        .model-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 16px 0; }
+        .model-card { background: #fcf9f2; border: 2px dashed var(--accent-bg); border-radius: 24px; padding: 20px 22px; transition: transform .3s var(--anim-curve); }
+        .model-card:hover { transform: translateY(-3px); }
+        .model-card b { font-size: 1.05rem; } .model-card small { display: block; color: var(--muted); margin-bottom: 8px; font-family: ui-monospace, Consolas, monospace; }
+        .model-card p { margin: 0; font-size: .92rem; }
+
+        /* этапы */
+        .steps { counter-reset: s; list-style: none; padding: 0; margin: 14px 0; }
+        .steps li { position: relative; padding: 4px 0 14px 46px; }
+        .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--text-color); color: var(--accent-bg); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+        .accordion-item { border: none; border-bottom: 1px solid #eee; background: transparent; }
+        .accordion-button { padding: 20px 0; font-size: 1.05rem; font-weight: 600; color: var(--text-color) !important; background-color: transparent !important; box-shadow: none !important; }
+        .accordion-body { padding: 0 0 22px 0; color: #444; line-height: 1.7; }
+
+        .site-foot { text-align: center; padding: 30px 20px 120px; color: var(--muted); font-size: .88rem; }
+        .site-foot a { color: var(--muted); }
+
+        /* плавающая кнопка «вверх» */
+        #toTop { position: fixed; right: 22px; bottom: 26px; width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--text-color); color: var(--accent-bg);
+            box-shadow: 0 12px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transform: translateY(10px); transition: all .35s var(--anim-curve); z-index: 900; }
+        #toTop.show { opacity: 1; pointer-events: auto; transform: none; }
+
+        @media (max-width: 992px) {
+            .docs-wrap { flex-direction: column; gap: 14px; padding: 6px 14px 110px; }
+            .toc { position: static; width: 100%; max-height: none; display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+            .toc::-webkit-scrollbar { display: none; }
+            .toc-title, .toc a.sub { display: none; }
+            .toc a { white-space: nowrap; background: var(--white); border: 1px solid #eadbc9; border-radius: 50rem; padding: 8px 16px; border-left: 1px solid #eadbc9; }
+            .toc a.on { border-left-color: var(--text-color); }
+            .doc-sec { padding: 26px 20px; border-radius: 24px; }
+            .model-grid { grid-template-columns: 1fr; }
+            #DocsHero { padding: 110px 0 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- НАВБАР -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-lg-5">
+            <div class="d-flex align-items-center">
+                <img src="logo.png" alt="Logo" class="logo-img me-2">
+                <span class="brand-text-muted d-none d-sm-inline">QuadLegacy</span>
+                <div class="ms-divider"></div>
+                <a class="navbar-brand-custom" href="https://quadlegacyai.github.io/">QuadLegacyAI</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Get started</a>
+                        <ul class="dropdown-menu shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-item" href="#quickstart">Быстрый старт</a></li>
+                            <li><a class="dropdown-item" href="#api">API</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="https://t.me/quadlegacyshizoaibot">Try free version on QuadAI</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link current" href="#">Docs</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Products</a>
+                        <ul class="dropdown-menu shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-item" href="https://qlegacy.github.io/radio">QuadLegacy Radio</a></li>
+                            <li><a class="dropdown-item" href="https://qlegacy.github.io/dwm">WebDWM</a></li>
+                            <li><a class="dropdown-item" href="index.html">QuadAI</a></li>
+                            <li><a class="dropdown-item" href="https://qlegacy.github.io/bio">Bio</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="DocsHero">
+        <div class="container">
+            <div class="flux-badge reveal active">Documentation</div>
+            <h1 class="py-3 display-5 reveal active">QuadAI — документация</h1>
+            <p class="lead reveal active mb-0">Бот в Telegram, веб-чат и HTTP API: как начать, какие есть модели, команды, лимиты и примеры запросов.</p>
+            <div class="hero-links reveal active">
+                <a href="#quickstart" class="generic-btn">Быстрый старт</a>
+                <a href="#api" class="generic-btn">Справочник API</a>
+            </div>
+        </div>
+    </section>
+    <div class="section-transition"></div>
+
+    <div class="docs-wrap">
+        <!-- ОГЛАВЛЕНИЕ -->
+        <nav class="toc" id="toc">
+            <div class="toc-title">Содержание</div>
+            <a href="#overview">Обзор</a>
+            <a href="#quickstart">Быстрый старт</a>
+            <a href="#models">Модели</a>
+            <a href="#bot">Telegram-бот</a>
+            <a href="#webchat">Веб-чат</a>
+            <a href="#api">HTTP API</a>
+            <a href="#api-auth" class="sub">Авторизация</a>
+            <a href="#api-chat" class="sub">Отправка сообщения</a>
+            <a href="#api-jobs" class="sub">Статус задачи</a>
+            <a href="#api-limits" class="sub">Лимиты</a>
+            <a href="#api-chats" class="sub">Чаты</a>
+            <a href="#api-link" class="sub">Привязка Telegram</a>
+            <a href="#stages">Этапы и статистика</a>
+            <a href="#themes">Оформление</a>
+            <a href="#android">Android-приложение</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+
+        <main class="doc">
+
+            <!-- ОБЗОР -->
+            <section class="doc-sec reveal" id="overview">
+                <h2>Обзор</h2>
+                <p class="lead-sm">Что такое QuadAI и из чего он состоит</p>
+                <p>QuadAI — это ИИ-ассистент от QuadLegacy. Он отвечает текстом, а ещё умеет превращать ответ в короткое 3D-видео (режим FluxV-Tempo). Пользоваться им можно тремя способами:</p>
+                <div class="model-grid">
+                    <div class="model-card"><b>Telegram-бот</b><small>@quadlegacyshizoaibot</small><p>Основной способ. Чат, видео-ответы, группы, Telegram Business.</p></div>
+                    <div class="model-card"><b>Веб-чат</b><small>index.html</small><p>Тот же ассистент в браузере или WebView, с историей чатов и темами.</p></div>
+                    <div class="model-card"><b>HTTP API</b><small>:8089</small><p>Ключ <code>qla_…</code> и запросы из своих скриптов и приложений.</p></div>
+                    <div class="model-card"><b>Beta-бот</b><small>@qwenaibot</small><p>Тестовая версия, где первыми появляются новые функции.</p></div>
+                </div>
+            </section>
+
+            <!-- БЫСТРЫЙ СТАРТ -->
+            <section class="doc-sec reveal" id="quickstart">
+                <h2>Быстрый старт</h2>
+                <p class="lead-sm">От нуля до первого ответа за минуту</p>
+                <h3>Через Telegram</h3>
+                <ol class="steps">
+                    <li>Открой бота <a href="https://t.me/quadlegacyshizoaibot">@quadlegacyshizoaibot</a> и нажми <b>Start</b>.</li>
+                    <li>Напиши любое сообщение, и бот ответит выбранной моделью.</li>
+                    <li>Чтобы получить видео-ответ, начни сообщение с <code>/video</code>.</li>
+                </ol>
+                <h3>Через веб-чат</h3>
+                <ol class="steps">
+                    <li>Открой страницу чата и нажми на аккаунт в левом нижнем углу.</li>
+                    <li>Выбери <b>BETA</b> или <b>PROD</b>, нажми <b>Start</b> в открывшемся боте. Аккаунт привяжется автоматически.</li>
+                    <li>Либо вставь API-ключ <code>qla_…</code> (в боте: <b>🔌 API</b>).</li>
+                    <li>Выбери модель в шапке и пиши сообщение.</li>
+                </ol>
+                <div class="callout">
+                    <b class="t">💡 Совет</b>
+                    Привязка через Telegram и API-ключ — разные способы входа. Можно привязать оба и переключаться между аккаунтами в меню аккаунта.
+                </div>
+            </section>
+
+            <!-- МОДЕЛИ -->
+            <section class="doc-sec reveal" id="models">
+                <h2>Модели</h2>
+                <p class="lead-sm">Идентификатор модели передаётся в поле <code>model</code> API</p>
+                <div class="model-grid">
+                    <div class="model-card"><b>FluxT-GidroD</b><small>fluxt_gidrod</small><p>Самообучаемая модель. Отвечает мгновенно.</p></div>
+                    <div class="model-card"><b>Qwen 2.5</b><small>qwen25</small><p>Локальная R1-distill. Думает и отвечает долго, показывает ход мыслей.</p></div>
+                    <div class="model-card"><b>Gemini</b><small>gemini</small><p>Google Gemini 2.0 Flash.</p></div>
+                    <div class="model-card"><b>FluxV-Tempo</b><small>fluxv_tempo</small><p>Видео-ответ: 3D-лабиринт на Raycasting DDA, панорамный слайд-шоу и Mario.</p></div>
+                </div>
+                <h3>Лимиты</h3>
+                <p>У каждой модели свои суточные лимиты. Остаток виден в веб-чате (<b>Подробнее → Использование</b>) и через <a href="#api-limits">запрос <code>/limits</code></a>. У безлимитных моделей в ответе <code>limit: null</code>.</p>
+            </section>
+
+            <!-- БОТ -->
+            <section class="doc-sec reveal" id="bot">
+                <h2>Telegram-бот</h2>
+                <p class="lead-sm">Команды и возможности</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Команда</th><th>Что делает</th></tr>
+                    <tr><td><code>/video &lt;текст&gt;</code></td><td>Рендерит видео-ответ FluxV-Tempo: 3D-лабиринт в стиле ретро-шутеров с вашим ответом в кадре и атмосферным звуком.</td></tr>
+                    <tr><td><code>/clear</code></td><td>Очищает историю текущего чата.</td></tr>
+                    <tr><td><b>🔌 API</b></td><td>Кнопка в меню бота: выдаёт ваш ключ <code>qla_…</code> для HTTP API и веб-чата.</td></tr>
+                </table></div>
+                <h3>Что умеет бот</h3>
+                <ul>
+                    <li>Обычный чат и видео-ответы FluxV.</li>
+                    <li>Работа в групповых чатах.</li>
+                    <li>Кэшированные ответы и история чата.</li>
+                    <li>Свои системные промпты (Ubuntu, Arch и т.д.).</li>
+                    <li>Русский и английский языки для всех моделей и видео-движка.</li>
+                </ul>
+                <h3>Telegram Business</h3>
+                <p>QuadAI можно подключить к личному профилю через Telegram Business: бот сам отвечает на входящие сообщения выбранной моделью и вашим системным промптом. Пошаговая инструкция — на <a href="business.html">странице подключения</a>.</p>
+            </section>
+
+            <!-- ВЕБ-ЧАТ -->
+            <section class="doc-sec reveal" id="webchat">
+                <h2>Веб-чат</h2>
+                <p class="lead-sm">Интерфейс в браузере и WebView</p>
+                <ul>
+                    <li><b>Чаты.</b> Список слева, у каждого чата кнопка удаления. На телефоне панель открывается кнопкой меню или свайпом от левого края.</li>
+                    <li><b>Модель.</b> Кнопка с названием в шапке или значок настроек. Буква-аватар в сообщениях совпадает с первой буквой модели.</li>
+                    <li><b>Аккаунты.</b> Можно держать несколько аккаунтов (Telegram и API-ключи) и переключаться между ними.</li>
+                    <li><b>Ответы.</b> Потоковый вывод, блоки кода с кнопкой «Копировать», ход мыслей (Qwen) и статистика скорости.</li>
+                    <li><b>Ввод.</b> На компьютере <code>Enter</code> отправляет, <code>Shift+Enter</code> — новая строка. На телефоне <code>Enter</code> даёт новую строку, отправка — кнопкой.</li>
+                </ul>
+            </section>
+
+            <!-- API -->
+            <section class="doc-sec reveal" id="api">
+                <h2>HTTP API</h2>
+                <p class="lead-sm">Все запросы и ответы — JSON</p>
+                <p>Базовый адрес — адрес вашего сервера QuadAI (в примерах <code>https://ai.quadlegacy.cyou</code>), сервис слушает порт <code>8089</code>. Все пути начинаются с <code>/api/v1</code>.</p>
+
+                <h3 id="api-auth">Авторизация</h3>
+                <p>Передай один из двух заголовков:</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Заголовок</th><th>Значение</th></tr>
+                    <tr><td><code>Authorization</code></td><td><code>Bearer qla_…</code> — API-ключ из бота (<b>🔌 API</b>)</td></tr>
+                    <tr><td><code>X-TG-Token</code></td><td>Токен сессии, выданный при привязке через Telegram</td></tr>
+                </table></div>
+                <div class="callout warn">
+                    <b class="t">⚠️ Храни ключ в секрете</b>
+                    Ключ <code>qla_…</code> даёт доступ к вашим лимитам и чатам. Не публикуй его в репозиториях и не вставляй в клиентский код.
+                </div>
+
+                <h3 id="api-chat"><span class="method m-post">POST</span><span class="endpoint">/api/v1/chat</span></h3>
+                <p>Ставит запрос в очередь и возвращает задачу.</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+                    <tr><td><code>model</code></td><td>string</td><td><code>fluxt_gidrod</code>, <code>qwen25</code>, <code>gemini</code> или <code>fluxv_tempo</code></td></tr>
+                    <tr><td><code>message</code></td><td>string</td><td>Текст сообщения</td></tr>
+                    <tr><td><code>chat_id</code></td><td>number</td><td>Необязательно. Чат, в который писать (иначе активный)</td></tr>
+                    <tr><td><code>wait</code></td><td>boolean</td><td><code>false</code> — сразу вернуть <code>job_id</code> и опрашивать самому. <code>true</code> — дождаться ответа в этом запросе</td></tr>
+                </table></div>
+                <div class="code"><div class="head"><span>curl</span><button>Копировать</button></div><pre><code>curl -X POST https://ai.quadlegacy.cyou/api/v1/chat \
+  -H "Authorization: Bearer qla_ВАШ_КЛЮЧ" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gemini","message":"Привет!","wait":false}'</code></pre></div>
+                <div class="code"><div class="head"><span>ответ</span><button>Копировать</button></div><pre><code>{
+  "job_id": "abc123",
+  "status": "queued",
+  "queue_ahead": 0
+}</code></pre></div>
+
+                <h3 id="api-jobs"><span class="method m-get">GET</span><span class="endpoint">/api/v1/jobs/{job_id}?wait=0.4</span></h3>
+                <p>Возвращает состояние задачи. Параметр <code>wait</code> — сколько секунд сервер может подержать запрос, ожидая изменений (long polling).</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Поле</th><th>Описание</th></tr>
+                    <tr><td><code>status</code></td><td><code>queued</code> — в очереди, <code>running</code> — идёт генерация, <code>error</code> — ошибка, иначе готово</td></tr>
+                    <tr><td><code>queue_ahead</code></td><td>Сколько задач впереди (при <code>queued</code>)</td></tr>
+                    <tr><td><code>stage</code>, <code>stage_detail</code>, <code>stage_elapsed</code></td><td>Текущий этап, пояснение и сколько секунд он идёт</td></tr>
+                    <tr><td><code>steps_done</code></td><td>Завершённые этапы: <code>[{label, seconds}]</code></td></tr>
+                    <tr><td><code>partial_text</code>, <code>partial_thoughts</code></td><td>Уже сгенерированная часть ответа и мыслей (потоковый вывод)</td></tr>
+                    <tr><td><code>text</code></td><td>Итоговый ответ</td></tr>
+                    <tr><td><code>thoughts</code></td><td>Ход мыслей (Qwen)</td></tr>
+                    <tr><td><code>stats</code>, <code>stats_text</code></td><td>Статистика: <code>total</code>, <code>gen_speed</code>, <code>gen_tokens</code>, <code>ttft</code>, <code>render_fps</code>, <code>compute_ms</code> и текстовая сводка</td></tr>
+                    <tr><td><code>file_url</code></td><td>Путь к видео (для <code>fluxv_tempo</code>). Скачивается с теми же заголовками авторизации</td></tr>
+                    <tr><td><code>timeout</code></td><td><code>true</code>, если время генерации вышло и ответ неполный</td></tr>
+                    <tr><td><code>error</code></td><td>Текст ошибки при <code>status: "error"</code></td></tr>
+                </table></div>
+                <div class="code"><div class="head"><span>Python — отправка и ожидание</span><button>Копировать</button></div><pre><code>import time, requests
+
+BASE = "https://ai.quadlegacy.cyou/api/v1"
+H = {"Authorization": "Bearer qla_ВАШ_КЛЮЧ"}
+
+job = requests.post(f"{BASE}/chat", headers=H,
+                    json={"model": "gemini", "message": "Объясни Raycasting", "wait": False}).json()
+
+while job["status"] in ("queued", "running"):
+    time.sleep(0.5)
+    job = requests.get(f"{BASE}/jobs/{job['job_id']}?wait=0.4", headers=H).json()
+
+if job["status"] == "error":
+    print("Ошибка:", job["error"])
+else:
+    print(job["text"])</code></pre></div>
+
+                <h3 id="api-limits"><span class="method m-get">GET</span><span class="endpoint">/api/v1/limits</span></h3>
+                <p>Суточные лимиты по моделям. Удобно и для проверки ключа: неверный ключ вернёт не-200.</p>
+                <div class="code"><div class="head"><span>ответ</span><button>Копировать</button></div><pre><code>{
+  "limits": {
+    "fluxt_gidrod": { "used": 3, "limit": null, "left": null },
+    "gemini":       { "used": 2, "limit": 15,   "left": 13 }
+  }
+}</code></pre></div>
+
+                <h3 id="api-chats">Чаты</h3>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Метод и путь</th><th>Описание</th></tr>
+                    <tr><td><span class="method m-get">GET</span><code>/chats</code></td><td>Список чатов: <code>{chats: [{id, title}], active}</code></td></tr>
+                    <tr><td><span class="method m-post">POST</span><code>/chats</code></td><td>Создать чат (тело <code>{}</code>), вернёт <code>{id}</code></td></tr>
+                    <tr><td><span class="method m-del">DELETE</span><code>/chats/{id}</code></td><td>Удалить чат</td></tr>
+                    <tr><td><span class="method m-get">GET</span><code>/chats/{id}/messages?limit=60</code></td><td>История: <code>{messages: [{role, content}]}</code>, роли <code>user</code> и <code>assistant</code></td></tr>
+                </table></div>
+
+                <h3 id="api-link">Привязка Telegram</h3>
+                <p>Нужна, чтобы получить токен сессии без API-ключа (так работает веб-чат).</p>
+                <ol class="steps">
+                    <li><span class="method m-post">POST</span><code>/tg/link/start</code> без авторизации. Ответ: <code>{code, bots: {beta, prod}}</code>, где <code>bots</code> — ссылки на ботов.</li>
+                    <li>Открой нужную ссылку, пользователь нажимает <b>Start</b> в боте.</li>
+                    <li>Опрашивай <span class="method m-get">GET</span><code>/tg/link/poll?code=…</code> раз в 1–2 секунды (код живёт 5 минут), пока <code>status</code> не станет <code>done</code>.</li>
+                    <li>В ответе придут <code>tg_token</code>, <code>user_id</code>, <code>full_name</code>, <code>username</code>, <code>avatar_url</code> и <code>bot_kind</code>. <code>tg_token</code> дальше передаётся в заголовке <code>X-TG-Token</code>.</li>
+                </ol>
+            </section>
+
+            <!-- ЭТАПЫ -->
+            <section class="doc-sec reveal" id="stages">
+                <h2>Этапы и статистика</h2>
+                <p class="lead-sm">Что видно, пока ответ генерируется</p>
+                <p>Пока задача в статусе <code>running</code>, в ответе <code>/jobs</code> приходит текущий этап, а завершённые копятся в <code>steps_done</code>. Примеры этапов:</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Модель</th><th>Этапы</th></tr>
+                    <tr><td>FluxV-Tempo</td><td>«Делаю сценарий…», «Рендерю…»</td></tr>
+                    <tr><td>Gemini</td><td>подключение к DeepMind API, генерация, получение частей через API</td></tr>
+                    <tr><td>FluxT-GidroD</td><td>«Делаю ответ смешным»</td></tr>
+                    <tr><td>Qwen 2.5</td><td>«Думаю…»</td></tr>
+                </table></div>
+                <p>После ответа доступна статистика: общее время, скорость в токенах в секунду (с «~», если число токенов оценочное), число токенов, время до первого токена, для видео — кадры в секунду рендера.</p>
+            </section>
+
+            <!-- ТЕМЫ -->
+            <section class="doc-sec reveal" id="themes">
+                <h2>Оформление</h2>
+                <p class="lead-sm">Подробнее → Оформление</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Стиль</th><th>Параметр</th><th>Описание</th></tr>
+                    <tr><td>Quad</td><td><code>quad</code></td><td>Фирменный: тёплые тона, крупные скругления</td></tr>
+                    <tr><td>Material You</td><td><code>material3</code></td><td>Android 12+: тональные поверхности, пилюли</td></tr>
+                    <tr><td>Material Design</td><td><code>material</code></td><td>Android 5–11: цветной тулбар, карточки с тенями, круглая кнопка-FAB</td></tr>
+                    <tr><td>Holo</td><td><code>holo</code></td><td>Android 3–4.x: Holo Dark и Light, синий акцент</td></tr>
+                    <tr><td>Glass</td><td><code>glass</code></td><td>Стекло и движущиеся огоньки</td></tr>
+                    <tr><td>Droid Cupcake</td><td><code>droid</code></td><td>Android 1.5</td></tr>
+                    <tr><td>W98</td><td><code>w98</code></td><td>Windows 98</td></tr>
+                </table></div>
+                <p>Режим: светлая, тёмная или авто. В стилях Quad, Material и Glass дополнительно выбирается одна из палитр (Песок, Небо, Роза, Мокко, Полночь, Фиалка). У Droid, W98 и Holo свои цвета.</p>
+                <p>Стиль можно принудительно задать в адресе: <code>?design=holo</code>. Алиасы: <code>materialyou</code>, <code>m3</code> → Material You; <code>lollipop</code> → Material Design.</p>
+            </section>
+
+            <!-- ANDROID -->
+            <section class="doc-sec reveal" id="android">
+                <h2>Android-приложение (WebView)</h2>
+                <p class="lead-sm">Автоподстройка дизайна при первом запуске</p>
+                <p>При первом запуске сайт сам выбирает стиль по версии Android и запоминает его. Дальше выбор остаётся за пользователем.</p>
+                <div class="tbl-wrap"><table class="t">
+                    <tr><th>Android</th><th>Стиль</th></tr>
+                    <tr><td>12 и новее</td><td>Material You</td></tr>
+                    <tr><td>5–11</td><td>Material Design</td></tr>
+                    <tr><td>3–4.x</td><td>Holo</td></tr>
+                    <tr><td>1–2.x</td><td>Droid Cupcake</td></tr>
+                </table></div>
+                <p>Версия берётся из User-Agent, либо из параметра <code>?api=</code>, если передать в ссылке номер SDK:</p>
+                <div class="code"><div class="head"><span>Java (Sketchware)</span><button>Копировать</button></div><pre><code>webview1.getSettings().setJavaScriptEnabled(true);
+webview1.getSettings().setDomStorageEnabled(true); // без этого не сохраняются тема и аккаунт
+webview1.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+webview1.loadUrl("https://ai.quadlegacy.cyou/?api=" + android.os.Build.VERSION.SDK_INT);</code></pre></div>
+                <div class="callout">
+                    <b class="t">Ссылки на Telegram</b>
+                    Чтобы t.me открывался в приложении Telegram, а не внутри WebView, перехватывай такие ссылки в <code>onPageStarted</code> и отдавай их системе через <code>Intent.ACTION_VIEW</code>. А для кнопки «Назад» добавь в <code>onBackPressed</code> проверку <code>webview1.canGoBack()</code>.
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section class="doc-sec reveal" id="faq">
+                <h2>FAQ</h2>
+                <p class="lead-sm">Частые вопросы и ошибки</p>
+                <div class="accordion" id="faqAcc">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q1">Пишет «Неверный ключ или сессия»</button></h2>
+                        <div id="q1" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Проверь, что ключ начинается с <code>qla_</code> и скопирован целиком. Если вход был через Telegram, привяжи аккаунт заново: токен сессии мог устареть.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2">«Нет связи с API»</button></h2>
+                        <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Сервер недоступен или не запущен. Если адрес указан в <code>REMOTE_API</code> (для хостинга на github.io), проверь, что он верный и что туннель работает.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3">Ответ обрывается, написано «Время генерации вышло»</button></h2>
+                        <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Модель не успела закончить, и вернулась уже готовая часть (<code>timeout: true</code>). Для долгих ответов выбери более быструю модель или разбей вопрос на части.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4">В WebView не сохраняется тема или аккаунт</button></h2>
+                        <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Включи <code>setDomStorageEnabled(true)</code>, иначе WebView не хранит данные страницы между запусками.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q5">ERR_UNKNOWN_URL_SCHEME при переходе в Telegram</button></h2>
+                        <div id="q5" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">WebView не умеет открывать <code>tg:</code> и <code>intent:</code>. Перехвати такие ссылки в приложении и открой их через <code>Intent.ACTION_VIEW</code>.</div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q6">Как удалить историю?</button></h2>
+                        <div id="q6" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">В боте — командой <code>/clear</code>. В веб-чате — кнопкой удаления у нужного чата в списке слева (<code>DELETE /chats/{id}</code> в API).</div></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="site-foot">
+        QuadAI · <a href="index.html">Главная</a> · <a href="business.html">Telegram Business</a> · <a href="https://t.me/quadlegacyshizoaibot">Telegram</a><br>
+        QuadAI может ошибаться.
+    </div>
+
+    <button id="toTop" aria-label="Наверх">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    /* появление блоков */
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }), { threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* кнопки «Копировать» в блоках кода */
+    document.querySelectorAll('.code').forEach(box => {
+        const btn = box.querySelector('button'), code = box.querySelector('code');
+        btn.addEventListener('click', async () => {
+            const text = code.innerText;
+            try { await navigator.clipboard.writeText(text); }
+            catch (e) { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+            const old = btn.textContent; btn.textContent = 'Скопировано ✓'; setTimeout(() => btn.textContent = old, 1400);
+        });
+    });
+
+    /* подсветка пункта оглавления по прокрутке */
+    const links = [...document.querySelectorAll('#toc a')];
+    const targets = links.map(a => document.querySelector(a.getAttribute('href')));
+    function spy() {
+        let cur = 0;
+        targets.forEach((t, i) => { if (t && t.getBoundingClientRect().top < 140) cur = i; });
+        links.forEach((a, i) => a.classList.toggle('on', i === cur));
+        const act = links[cur], toc = document.getElementById('toc');
+        if (act && toc.scrollWidth > toc.clientWidth && getComputedStyle(toc).display === 'flex') {
+            toc.scrollTo({ left: act.offsetLeft - 20, behavior: 'smooth' });
+        }
+    }
+
+    /* навбар прячется при прокрутке вниз, кнопка «наверх» */
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar'), toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+        const st = window.pageYOffset || document.documentElement.scrollTop;
+        if (st > lastScrollTop && st > 100) navbar.classList.add('navbar-hidden'); else navbar.classList.remove('navbar-hidden');
+        lastScrollTop = st;
+        toTop.classList.toggle('show', st > 600);
+        spy();
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    spy();
+    </script>
+</body>
+</html>
